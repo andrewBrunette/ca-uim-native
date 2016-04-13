@@ -6,9 +6,6 @@
   connection: local
   vars:
     datacenter: "UC1"
-    PW: "{{ fileshare_password }}"
-    DOMAIN: "t3n"
-    USER: "svc_ecosys"
     server_name: UIMTST
     server_group: ecosystem_team
     server_count: 1
@@ -27,7 +24,7 @@
     clc_server:
       name: "{{server_name}}"
       template: rhel-6-64
-      password: "{{pswd}}"
+      password: "{{ server_password }}"
       group: "{{ server_group }}"
       count: "{{server_count}}"
       location: "{{datacenter_name}}"
@@ -43,7 +40,7 @@
       name={{ item.name }}
       ansible_ssh_host={{ item.ipaddress }}
       ansible_ssh_user=root
-      ansible_ssh_pass="{{pswd}}"
+      ansible_ssh_pass="{{ server_password }}"
       groupname="Servers"
     with_flattened: provisioned.servers
 
@@ -51,6 +48,10 @@
   hosts: Servers
   gather_facts: true
   connection: ssh
+  vars:
+    PW: "{{ fileshare_password }}"
+    DOMAIN: "t3n"
+    USER: "svc_ecosys"
   tasks:
   - name: yum cleanup
     shell: yum-complete-transaction -y
