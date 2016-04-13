@@ -64,7 +64,8 @@
   - name: file retrieve
     mount: src=//172.17.1.23/Software name=/mnt opts=domain='{{ DOMAIN }}',username='{{ USER }}',password='{{ PW }}' fstype=cifs state=mounted
   - name: File move
-    copy: src=/mnt/Ecosystem_Images/CA/UIM/uim.zip dest=/uim/uim.zip
+#    copy: src=/mnt/Ecosystem_Images/CA/UIM/uim.zip dest=/uim/uim.zip
+    shell: cp /mnt/Ecosystem_Images/CA/UIM/uim.zip /uim/uim.zip
   - name: unmount
     shell: umount /mnt
   - name: expand archive
