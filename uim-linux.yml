@@ -1,7 +1,7 @@
 ---
 
 - name: UIM Server Build and Install
-- hosts: localhost
+  hosts: localhost
   gather_facts: true
   connection: local
   vars:
@@ -59,7 +59,7 @@
     with_flattened: provisioned.servers
 
   - name: Install UIM
-  - hosts: Servers
+    hosts: Servers
     gather_facts: true
     connection: ssh
     tasks:
