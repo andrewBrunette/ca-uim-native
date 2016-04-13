@@ -69,12 +69,12 @@
   - name: expand archive
     unarchive: src=/uim/uim.zip dest=/uim
   - name: properties file setup
-    lineinfile: dest=/uim/NMS_installer.properties regexp=DB_ADMIN_USER=root line=DB_ADMIN_USER={{ DATABASE_ADMIN_USERNAME }}
-    lineinfile: dest=/uim/NMS_installer.properties regexp=DB_ADMIN_PASSWORD=nimsoft line=DB_ADMIN_PASSWORD={{ DATABASE_ADMIN_PASSWORD }}
-    lineinfile: dest=/uim/NMS_installer.properties regexp=NIM_USER=administrator line=NIM_USER={{ UIM_ADMINISTRATOR_USER_NAME }}
-    lineinfile: dest=/uim/NMS_installer.properties regexp=NMS_PASSWORD=nimsoft line=NIM_USER={{ UIM_ADMINISTRATOR_USER_PASSWORD }}
-    lineinfile: dest=/uim/NMS_installer.properties regexp=NIMBUS_USERNAME=administrator line=NIMBUS_USERNAME={{ UIM_ADMINISTRATOR_USER_NAME }}
-    lineinfile: dest=/uim/NMS_installer.properties regexp=NIMBUS_PASSWORD=nimsoft line=NIMBUS_PASSWORD={{ UIM_ADMINISTRATOR_USER_PASSWORD }}
+    lineinfile: dest=/uim/NMS_installer.properties regexp=DB_ADMIN_USER=root line=DB_ADMIN_USER={{ db_admin_username }}
+    lineinfile: dest=/uim/NMS_installer.properties regexp=DB_ADMIN_PASSWORD=nimsoft line=DB_ADMIN_PASSWORD={{ db_admin_password }}
+    lineinfile: dest=/uim/NMS_installer.properties regexp=NIM_USER=administrator line=NIM_USER={{ uim_admin_username }}
+    lineinfile: dest=/uim/NMS_installer.properties regexp=NMS_PASSWORD=nimsoft line=NIM_USER={{ uim_admin_password }}
+    lineinfile: dest=/uim/NMS_installer.properties regexp=NIMBUS_USERNAME=administrator line=NIMBUS_USERNAME={{ uim_admin_username }}
+    lineinfile: dest=/uim/NMS_installer.properties regexp=NIMBUS_PASSWORD=nimsoft line=NIMBUS_PASSWORD={{ uim_admin_password }}
   - name: setup install dirs
     file: path=/uim/log state=directory
     file: path=/uim/automation state=directory
