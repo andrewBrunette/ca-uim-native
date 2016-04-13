@@ -31,7 +31,7 @@
       group: "{{ server_group }}"
       count: "{{server_count}}"
       location: "{{datacenter_name}}"
-      storage_type: "{{ storage_type }}"
+      storage_type: "standard"
       additional_disks: "{{ disk }}"
       cpu: "{{def_cpu}}" # Default -- not necessary
       memory: "{{def_mem}}" # Default -- not necessary
