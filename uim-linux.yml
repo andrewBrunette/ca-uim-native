@@ -91,9 +91,9 @@
   - name: setup mysql Server
     yum: name=mysql-server state=latest
   - name: backup my.cnf
-    copy: src=/etc/my.cnf dest=/etc/my.cnf.bak
+    shell: cp /etc/my.cnf /etc/my.cnf.bak
   - name: install my.cnf
-    copy: src=/uim/my.cnf dest=/etc/
+    shell: cp /uim/my.cnf /etc/
   - name: create /tmp sock for mysql
     file: src=/var/lib/mysql/mysql.sock path=/tmp/mysql.sock state=link force=yes
   - name: start mysql service
@@ -118,7 +118,7 @@
     shell: ls /uim/bin/*bin
     register: file_list
   - name: copy bin files
-    copy: src={{ item }} dest=/uim/automation mode=0755
+    shell:  cp {{ item }} /uim/automation
     with_items: file_list.stdout_lines
   - name: clean left brackets
     replace: dest=/uim/NMS_installer.properties regexp=\{\{ replace=' '
@@ -129,7 +129,7 @@
   - name: setup NMS file in /tmp address
     replace: dest=/uim/NMS_installer.properties regexp=anisble_eth0.ipv4_address replace={{ ansible_default_ipv4.address }}
   - name: copy file to /tmp
-    copy: src=/uim/NMS_installer.properties dest=/uim/automation/NMS_installer.properties
+    shell: cp /uim/NMS_installer.properties /uim/automation/NMS_installer.properties
   - name: install CA UIM
     shell: /uim/automation/setupCAUIMServer_linux.bin -i silent -f  /uim/automation/NMS_installer.properties
   - name: clean left brackets from UMP file
@@ -141,6 +141,6 @@
   - name: setup ip address in UMP file
     replace: dest=/uim/UMP_installer.properties regexp=anisble_eth0.ipv4_address replace=ansible_default_ipv4.address
   - name: copy UMP file
-    copy: src=/uim/UMP_installer.properties dest=/uim/automation/UMP_installer.properties
+    shell: cp /uim/UMP_installer.properties /uim/automation/UMP_installer.properties
   - name: install UMP
     shell: export IATEMPDIR=/uim;/uim/automation/installUMP_linux.bin -i silent -f UMP_installer.properties
