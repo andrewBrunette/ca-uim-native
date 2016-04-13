@@ -6,17 +6,6 @@
   connection: local
   vars:
     datacenter: "UC1"
-  #########################  test values, remove for runner
-    fileshare_password: "QWzxPOmn0987!@#$"
-    db_admin_username: "dbadmin"
-    db_admin_password: "Fish1Master$"
-    uim_admin_username: "uim_admin"
-    uim_admin_password: "Fish1Master$"
-  #########################  end test values
-    DATABASE_ADMIN_USERNAME: "{{ db_admin_username }}"
-    DATABASE_ADMIN_PASSWORD: "{{ db_admin_password }}"
-    UIM_ADMINISTRATOR_USER_NAME: "{{ uim_admin_username }}"
-    UIM_ADMINISTRATOR_USER_PASSWORD: "{{ uim_admin_password }}"
     PW: "{{ fileshare_password }}"
     DOMAIN: "t3n"
     USER: "svc_ecosys"
@@ -58,98 +47,98 @@
       groupname="Servers"
     with_flattened: provisioned.servers
 
-  - name: Install UIM
-    hosts: Servers
-#    gather_facts: true
-    connection: ssh
-    tasks:
-    - name: yum cleanup
-      shell: yum-complete-transaction -y
-    - name: yum cleanup 2
-      shell: yum-complete-transaction -y
-    - name: yum cleanup 3
-      shell: yum-complete-transaction -y
-    - name: create install dir
-      file: path=/uim state=directory
-    - name: file retrieve
-      mount: src=//172.17.1.23/Software name=/mnt opts=domain='{{ DOMAIN }}',username='{{ USER }}',password='{{ PW }}' fstype=cifs state=mounted
-    - name: File move
-      copy: src=/mnt/Ecosystem_Images/CA/UIM/uim.zip dest=/uim/uim.zip
-    - name: unmount
-      shell: umount /mnt
-    - name: expand archive
-      unarchive: src=/uim/uim.zip dest=/uim
-    - name: properties file setup
-      lineinfile: dest=/uim/NMS_installer.properties regexp=DB_ADMIN_USER=root line=DB_ADMIN_USER={{ DATABASE_ADMIN_USERNAME }}
-      lineinfile: dest=/uim/NMS_installer.properties regexp=DB_ADMIN_PASSWORD=nimsoft line=DB_ADMIN_PASSWORD={{ DATABASE_ADMIN_PASSWORD }}
-      lineinfile: dest=/uim/NMS_installer.properties regexp=NIM_USER=administrator line=NIM_USER={{ UIM_ADMINISTRATOR_USER_NAME }}
-      lineinfile: dest=/uim/NMS_installer.properties regexp=NMS_PASSWORD=nimsoft line=NIM_USER={{ UIM_ADMINISTRATOR_USER_PASSWORD }}
-      lineinfile: dest=/uim/NMS_installer.properties regexp=NIMBUS_USERNAME=administrator line=NIMBUS_USERNAME={{ UIM_ADMINISTRATOR_USER_NAME }}
-      lineinfile: dest=/uim/NMS_installer.properties regexp=NIMBUS_PASSWORD=nimsoft line=NIMBUS_PASSWORD={{ UIM_ADMINISTRATOR_USER_PASSWORD }}
-    - name: setup install dirs
-      file: path=/uim/log state=directory
-      file: path=/uim/automation state=directory
-    - name: setup dependencies
-      yum: name=compat-libstdc++-33 state=latest
-    - name: setup java
-      yum: name=java-1.7.0-openjdk-devel.x86_64 state=latest
-    - name: setup expect
-      yum: name=expect state=latest
-    - name: setup mysql
-      yum: name=/uim/bin/mysql-community-release-el6-5.noarch.rpm state=present
-    - name: setup mysql Server
-      yum: name=mysql-server state=latest
-    - name: backup my.cnf
-      copy: src=/etc/my.cnf dest=/etc/my.cnf.bak
-    - name: install my.cnf
-      copy: src=/uim/my.cnf dest=/etc/
-    - name: create /tmp sock for mysql
-      file: src=/var/lib/mysql/mysql.sock path=/tmp/mysql.sock state=link force=yes
-    - name: start mysql service
-      service: name=mysqld state=started
-    - name: setup chkconfig
-      shell: chkconfig --level 345 mysqld on
-    - name: set mysql password locally
-      shell: mysqladmin -u root password {{ db_admin_password }}
-    - name: localhost password
-      shell: mysqladmin -u root --password={{ db_admin_password }}  -h localhost password {{ db_admin_password }}
-    - name: hostname password
-      shell: mysqladmin -u root --password={{ db_admin_password }} -h {{ ansible_hostname }} password {{ db_admin_password }}
-    - name: initialize DB
-      shell: mysql --user=root --password={{ db_admin_password }}  --verbose < /uim/mysql-init.sql
-    - name: access to simulators
-      yum: name=net-snmp-utils state=latest
-    - name: edit hosts file
-      shell: echo "{{ ansible_default_ipv4.address }} {{ ansible_hostname }}>> /etc/hosts  "
-    - name: setup work dir in tmp
-      file: path=/uim/automation state=directory mode=0700
-    - name: get file names
-      shell: ls /uim/bin/*bin
-      register: file_list
-    - name: copy bin files
-      copy: src={{ item }} dest=/uim/automation mode=0755
-      with_items: file_list.stdout_lines
-    - name: clean left brackets
-      replace: dest=/uim/NMS_installer.properties regexp=\{\{ replace=' '
-    - name: clean right brackets
-      replace: dest=/uim/NMS_installer.properties regexp=}} replace=''
-    - name: setup NMS file in /tmp hostname
-      replace: dest=/uim/NMS_installer.properties regexp=anisble_hostname  replace={{ ansible_hostname }}
-    - name: setup NMS file in /tmp address
-      replace: dest=/uim/NMS_installer.properties regexp=anisble_eth0.ipv4_address replace={{ ansible_default_ipv4.address }}
-    - name: copy file to /tmp
-      copy: src=/uim/NMS_installer.properties dest=/uim/automation/NMS_installer.properties
-    - name: install CA UIM
-      shell: /uim/automation/setupCAUIMServer_linux.bin -i silent -f  /uim/automation/NMS_installer.properties
-    - name: clean left brackets from UMP file
-      replace: dest=/uim/UMP_installer.properties regexp=\{\{ replace=''
-    - name: clean right brackets from UMP file
-      replace: dest=/uim/UMP_installer.properties regexp=}} replace=''
-    - name: setup hostname in UMP file
-      replace: dest=/uim/UMP_installer.properties regexp=anisble_hostname replace=ansible_hostname
-    - name: setup ip address in UMP file
-      replace: dest=/uim/UMP_installer.properties regexp=anisble_eth0.ipv4_address replace=ansible_default_ipv4.address
-    - name: copy UMP file
-      copy: src=/uim/UMP_installer.properties dest=/uim/automation/UMP_installer.properties
-    - name: install UMP
-      shell: export IATEMPDIR=/uim;/uim/automation/installUMP_linux.bin -i silent -f UMP_installer.properties
+- name: Install UIM
+  hosts: Servers
+  gather_facts: true
+  connection: ssh
+  tasks:
+  - name: yum cleanup
+    shell: yum-complete-transaction -y
+  - name: yum cleanup 2
+    shell: yum-complete-transaction -y
+  - name: yum cleanup 3
+    shell: yum-complete-transaction -y
+  - name: create install dir
+    file: path=/uim state=directory
+  - name: file retrieve
+    mount: src=//172.17.1.23/Software name=/mnt opts=domain='{{ DOMAIN }}',username='{{ USER }}',password='{{ PW }}' fstype=cifs state=mounted
+  - name: File move
+    copy: src=/mnt/Ecosystem_Images/CA/UIM/uim.zip dest=/uim/uim.zip
+  - name: unmount
+    shell: umount /mnt
+  - name: expand archive
+    unarchive: src=/uim/uim.zip dest=/uim
+  - name: properties file setup
+    lineinfile: dest=/uim/NMS_installer.properties regexp=DB_ADMIN_USER=root line=DB_ADMIN_USER={{ DATABASE_ADMIN_USERNAME }}
+    lineinfile: dest=/uim/NMS_installer.properties regexp=DB_ADMIN_PASSWORD=nimsoft line=DB_ADMIN_PASSWORD={{ DATABASE_ADMIN_PASSWORD }}
+    lineinfile: dest=/uim/NMS_installer.properties regexp=NIM_USER=administrator line=NIM_USER={{ UIM_ADMINISTRATOR_USER_NAME }}
+    lineinfile: dest=/uim/NMS_installer.properties regexp=NMS_PASSWORD=nimsoft line=NIM_USER={{ UIM_ADMINISTRATOR_USER_PASSWORD }}
+    lineinfile: dest=/uim/NMS_installer.properties regexp=NIMBUS_USERNAME=administrator line=NIMBUS_USERNAME={{ UIM_ADMINISTRATOR_USER_NAME }}
+    lineinfile: dest=/uim/NMS_installer.properties regexp=NIMBUS_PASSWORD=nimsoft line=NIMBUS_PASSWORD={{ UIM_ADMINISTRATOR_USER_PASSWORD }}
+  - name: setup install dirs
+    file: path=/uim/log state=directory
+    file: path=/uim/automation state=directory
+  - name: setup dependencies
+    yum: name=compat-libstdc++-33 state=latest
+  - name: setup java
+    yum: name=java-1.7.0-openjdk-devel.x86_64 state=latest
+  - name: setup expect
+    yum: name=expect state=latest
+  - name: setup mysql
+    yum: name=/uim/bin/mysql-community-release-el6-5.noarch.rpm state=present
+  - name: setup mysql Server
+    yum: name=mysql-server state=latest
+  - name: backup my.cnf
+    copy: src=/etc/my.cnf dest=/etc/my.cnf.bak
+  - name: install my.cnf
+    copy: src=/uim/my.cnf dest=/etc/
+  - name: create /tmp sock for mysql
+    file: src=/var/lib/mysql/mysql.sock path=/tmp/mysql.sock state=link force=yes
+  - name: start mysql service
+    service: name=mysqld state=started
+  - name: setup chkconfig
+    shell: chkconfig --level 345 mysqld on
+  - name: set mysql password locally
+    shell: mysqladmin -u root password {{ db_admin_password }}
+  - name: localhost password
+    shell: mysqladmin -u root --password={{ db_admin_password }}  -h localhost password {{ db_admin_password }}
+  - name: hostname password
+    shell: mysqladmin -u root --password={{ db_admin_password }} -h {{ ansible_hostname }} password {{ db_admin_password }}
+  - name: initialize DB
+    shell: mysql --user=root --password={{ db_admin_password }}  --verbose < /uim/mysql-init.sql
+  - name: access to simulators
+    yum: name=net-snmp-utils state=latest
+  - name: edit hosts file
+    shell: echo "{{ ansible_default_ipv4.address }} {{ ansible_hostname }}>> /etc/hosts  "
+  - name: setup work dir in tmp
+    file: path=/uim/automation state=directory mode=0700
+  - name: get file names
+    shell: ls /uim/bin/*bin
+    register: file_list
+  - name: copy bin files
+    copy: src={{ item }} dest=/uim/automation mode=0755
+    with_items: file_list.stdout_lines
+  - name: clean left brackets
+    replace: dest=/uim/NMS_installer.properties regexp=\{\{ replace=' '
+  - name: clean right brackets
+    replace: dest=/uim/NMS_installer.properties regexp=}} replace=''
+  - name: setup NMS file in /tmp hostname
+    replace: dest=/uim/NMS_installer.properties regexp=anisble_hostname  replace={{ ansible_hostname }}
+  - name: setup NMS file in /tmp address
+    replace: dest=/uim/NMS_installer.properties regexp=anisble_eth0.ipv4_address replace={{ ansible_default_ipv4.address }}
+  - name: copy file to /tmp
+    copy: src=/uim/NMS_installer.properties dest=/uim/automation/NMS_installer.properties
+  - name: install CA UIM
+    shell: /uim/automation/setupCAUIMServer_linux.bin -i silent -f  /uim/automation/NMS_installer.properties
+  - name: clean left brackets from UMP file
+    replace: dest=/uim/UMP_installer.properties regexp=\{\{ replace=''
+  - name: clean right brackets from UMP file
+    replace: dest=/uim/UMP_installer.properties regexp=}} replace=''
+  - name: setup hostname in UMP file
+    replace: dest=/uim/UMP_installer.properties regexp=anisble_hostname replace=ansible_hostname
+  - name: setup ip address in UMP file
+    replace: dest=/uim/UMP_installer.properties regexp=anisble_eth0.ipv4_address replace=ansible_default_ipv4.address
+  - name: copy UMP file
+    copy: src=/uim/UMP_installer.properties dest=/uim/automation/UMP_installer.properties
+  - name: install UMP
+    shell: export IATEMPDIR=/uim;/uim/automation/installUMP_linux.bin -i silent -f UMP_installer.properties
