@@ -69,7 +69,7 @@
   - name: unmount
     shell: umount /mnt
   - name: expand archive
-    unarchive: src=/uim/uim.zip dest=/uim
+    unarchive: src=/uim/uim.zip dest=/uim copy=no
   - name: properties file setup
     lineinfile: dest=/uim/NMS_installer.properties regexp=DB_ADMIN_USER=root line=DB_ADMIN_USER={{ db_admin_username }}
     lineinfile: dest=/uim/NMS_installer.properties regexp=DB_ADMIN_PASSWORD=nimsoft line=DB_ADMIN_PASSWORD={{ db_admin_password }}
