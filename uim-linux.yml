@@ -60,7 +60,7 @@
 
   - name: Install UIM
     hosts: Servers
-    gather_facts: true
+#    gather_facts: true
     connection: ssh
     tasks:
     - name: yum cleanup
