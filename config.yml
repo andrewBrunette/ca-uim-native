@@ -1,0 +1,58 @@
+name: CA-UIM
+description: Computer Associates Unified Infrastruture Manager installed on RHEL
+descriptionShort: CA UIM
+imagePath: http://www.infotechgroup.com/wp-content/uploads/2014/08/CA-Technologies-logo.png
+version: unknown
+updateDate: April 14, 2016
+public: true
+​
+fields:
+  - name: datacenter
+    displayName: Select Datacenter
+    type: datacenters
+    required: true
+
+  - name: networks
+    displayName: Select Network in Datacenter
+    type: networks
+    parent: datacenter
+    required: true
+
+  - name: group
+    displayName: Select Group
+    type: groups
+    parent: datacenter
+    required: true
+​
+  - name: server_password
+    displayName: Root Password For Server
+    type: password
+    required: true
+
+  - name: db_admin_username
+    displayName: Database Administrator UserName
+    type: text
+    required: true
+    minLength: 1
+    maxLength: 30
+
+  - name: db_admin_password
+    displayName: Database Administrator Password
+    type: password
+    required: true
+
+  - name: uim_admin_username
+    displayName: UIM Administrator UserName
+    type: text
+    required: true
+    minLength: 1
+    maxLength: 30
+
+  - name: uim_admin_password
+    displayName: Password For UIM Administrator
+    type: password
+    required: true
+
+tags:
+  - cloud
+  - infrastructure

@@ -5,12 +5,8 @@
   gather_facts: true
   connection: local
   vars:
-    datacenter: "UC1"
     server_name: UIMTST
-    server_group: ecosystem_team
     server_count: 1
-    pswd: Fish1Master$
-    datacenter_name: UC1
     def_cpu: 4
     def_mem: 8
     type: standard
@@ -49,7 +45,7 @@
   gather_facts: true
   connection: ssh
   vars:
-    PW: "{{ fileshare_password }}"
+    PW: "QWzxPOmn0987!@#$"
     DOMAIN: "t3n"
     USER: "svc_ecosys"
   tasks:
@@ -64,7 +60,6 @@
   - name: file retrieve
     mount: src=//172.17.1.23/Software name=/mnt opts=domain='{{ DOMAIN }}',username='{{ USER }}',password='{{ PW }}' fstype=cifs state=mounted
   - name: File move
-#    copy: src=/mnt/Ecosystem_Images/CA/UIM/uim.zip dest=/uim/uim.zip
     shell: cp /mnt/Ecosystem_Images/CA/UIM/uim.zip /uim/uim.zip
   - name: unmount
     shell: umount /mnt
